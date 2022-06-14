@@ -160,9 +160,7 @@ namespace HeliCam
                 config = new Config();
                 config.LoadBackupConfig();
             }
-            Debug.WriteLine(config.SDPDHeli1);
             config.sdpdhelihash1 = GetHashKey(config.SDPDHeli1);
-            Debug.WriteLine(Convert.ToString(config.sdpdhelihash1));
             config.sdpdhelihash2 = GetHashKey(config.SDPDHeli2);
             config.nhsphelihash1 = GetHashKey(config.NHSPHeli1);
             config.nhsphelihash2 = GetHashKey(config.NHSPHeli2);
