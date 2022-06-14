@@ -13,6 +13,13 @@
   "AllowSpeedCalculations": true,
   "AllowSpotlights": true,
   "UseRealisticFLIR": true,
-  "AircraftHashes": [ "mammatus", "dodo" ],
-  "HelicopterHashes": []
+  "SDPDHeli1": "polmav",
+  "SDPDHeli2": "n/a",
+  "NHSPHeli1": "as332",
+  "NHSPHeli2": "pantera",
+  "HCSOHeli1": "n/a1",
+  "HCSOHeli2": "n/a2",
+  "SRTHeli1": "c3swathawk",
+  "SRTHeli2": "buzzard2",
+  "EMSHeli1": "aw139"
 }

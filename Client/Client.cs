@@ -26,8 +26,25 @@ namespace HeliCam
         public bool AllowSpeedCalculations { get; set; }
         public bool AllowSpotlights { get; set; }
         public bool UseRealisticFLIR { get; set; }
-        public List<string> AircraftHashes { get; set; }
-        public List<string> HelicopterHashes { get; set; }
+        public string SDPDHeli1 { get; set; }
+        public string SDPDHeli2 { get; set; }
+        public string NHSPHeli1 { get; set; }
+        public string NHSPHeli2 { get; set; }
+        public string HCSOHeli1 { get; set; }
+        public string HCSOHeli2 { get; set; }
+        public string SRTHeli1 { get; set; }
+        public string SRTHeli2 { get; set; }
+        public string EMSHeli1 { get; set; }
+
+        public int sdpdhelihash1;
+        public int sdpdhelihash2;
+        public int nhsphelihash1;
+        public int nhsphelihash2;
+        public int hcsohelihash1;
+        public int hcsohelihash2;
+        public int srthelihash1;
+        public int srthelihash2;
+        public int emshelihash1;
 
         internal void LoadBackupConfig()
         {
@@ -44,9 +61,16 @@ namespace HeliCam
             AllowRappel = true;
             AllowSpeedCalculations = true;
             AllowSpotlights = true;
-            UseRealisticFLIR = true;
-            AircraftHashes = new List<string> { "mammatus", "dodo" };
-            HelicopterHashes = new List<string>();
+            UseRealisticFLIR = false;
+            SDPDHeli1 = "polmav";
+            SDPDHeli2 = "n/a";
+            NHSPHeli1 = "as332";
+            NHSPHeli2 = "pantera";
+            HCSOHeli1 = "n/a1";
+            HCSOHeli2 = "n/a2";
+            SRTHeli1 = "c3swathawk";
+            SRTHeli2 = "buzzard2";
+            EMSHeli1 = "aw139";
             Debug.WriteLine("loaded backup configuration successfully!");
             Debug.WriteLine(JsonConvert.SerializeObject(this));
         }
@@ -70,7 +94,7 @@ namespace HeliCam
 
     public class Client : BaseScript
     {
-        #region Variables
+        #region Variablesz
         private const Control CAM_TOGGLE = Control.Context;
         private const Control VISION_TOGGLE = Control.ScriptRRight;
         private const Control REPEL = Control.ParachuteSmoke;
@@ -136,7 +160,19 @@ namespace HeliCam
                 config = new Config();
                 config.LoadBackupConfig();
             }
+            Debug.WriteLine(config.SDPDHeli1);
+            config.sdpdhelihash1 = GetHashKey(config.SDPDHeli1);
+            Debug.WriteLine(Convert.ToString(config.sdpdhelihash1));
+            config.sdpdhelihash2 = GetHashKey(config.SDPDHeli2);
+            config.nhsphelihash1 = GetHashKey(config.NHSPHeli1);
+            config.nhsphelihash2 = GetHashKey(config.NHSPHeli2);
+            config.hcsohelihash1 = GetHashKey(config.HCSOHeli1);
+            config.hcsohelihash2 = GetHashKey(config.HCSOHeli2);
+            config.srthelihash1 = GetHashKey(config.SRTHeli1);
+            config.srthelihash2 = GetHashKey(config.SRTHeli2);
+            config.emshelihash1 = GetHashKey(config.EMSHeli1);
         }
+
 
         [Command("heli")]
         internal void HeliCommand(int src, List<object> args, string raw)
@@ -272,27 +308,27 @@ namespace HeliCam
                     PlayManagedSoundFrontend("SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET");
                     _helicam = true;
                 }
-
                 if (Game.IsControlJustPressed(0, REPEL) && config.AllowRappel)
                 {
                     if (heli.GetPedOnSeat(VehicleSeat.LeftRear) == player || heli.GetPedOnSeat(VehicleSeat.RightRear) == player)
-                    {
-                        if (_shouldRappel)
                         {
-                            PlayManagedSoundFrontend("SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET");
-                            TaskRappelFromHeli(player.Handle, 1);
+                        if (_shouldRappel)
+                            {
+                                PlayManagedSoundFrontend("SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+                                TaskRappelFromHeli(player.Handle, 1);
+                            }
+                            else
+                            {
+                                Screen.ShowNotification("Press again to rappel from helicopter.");
+                                _shouldRappel = true;
+                            }
                         }
                         else
                         {
-                            Screen.ShowNotification("Press again to rappel from helicopter.");
-                            _shouldRappel = true;
+                            Screen.ShowNotification("~r~Can't rappel from this seat!", true);
+                            PlayManagedSoundFrontend("5_Second_Timer", "DLC_HEISTS_GENERAL_FRONTEND_SOUNDS");
                         }
-                    }
-                    else
-                    {
-                        Screen.ShowNotification("~r~Can't rappel from this seat!", true);
-                        PlayManagedSoundFrontend("5_Second_Timer", "DLC_HEISTS_GENERAL_FRONTEND_SOUNDS");
-                    }
+                    
                 }
             }
             else
@@ -407,7 +443,8 @@ namespace HeliCam
                                 RenderInfo(lockedEntity);
                                 hitPos = endPos = lockedEntity.Position;
                                 string lockedTimeString = DateTime.Now.Subtract(lockedTime).ToString(@"mm\:ss");
-                                RenderText(0.2f, 0.4f, $"~g~Locked ~w~{lockedTimeString}");
+                                RenderText(0.4f, 0.4f, $"~g~Locked ~w~{lockedTimeString}");
+
 
                                 if (World.GetDistance(lockedEntity.Position, heli.Position) > config.MaxDist || Game.IsControlJustPressed(0, TOGGLE_ENTITY_LOCK) || DateTime.Now.Subtract(lastLosTime).Seconds > 5)
                                 {
@@ -426,7 +463,7 @@ namespace HeliCam
                     }
                     else
                     {
-                        RenderText(0.2f, 0.4f, $"~r~Unlocked");
+                        RenderText(0.4f, 0.4f, $"~r~Unlocked");
                         CheckInputRotation(cam, zoomValue);
                         Tuple<Entity, Vector3, Vector3> detected = GetEntityInView(cam);
                         endPos = detected.Item3;
@@ -729,15 +766,24 @@ namespace HeliCam
                 Game.Nightvision = true;
                 _visionState = 1;
             }
-            else if (_visionState == 1)
+            else if (_visionState == 1 && config.UseRealisticFLIR == true)
             {
                 Game.Nightvision = false;
                 SetTimecycleModifier("NG_blackout");
                 SetTimecycleModifierStrength(0.992f);
                 _visionState = 2;
             }
+            else if (_visionState == 1 && config.UseRealisticFLIR == false)
+            {
+                Game.Nightvision = false;
+                Game.ThermalVision = true;
+                SetTimecycleModifier("heliGunCam");
+                SetTimecycleModifierStrength(0.992f);
+                _visionState = 2;
+            }
             else
             {
+                Game.ThermalVision = false;
                 ClearTimecycleModifier();
                 SetTimecycleModifier("heliGunCam");
                 SetTimecycleModifierStrength(0.3f);
@@ -858,8 +904,11 @@ namespace HeliCam
                 Vehicle veh = (Vehicle)ent;
                 string model = veh.LocalizedName;
                 string plate = veh.Mods.LicensePlate;
+                float speed = veh.Speed;
+                double mphspeed = Math.Round(speed * 2.236936);
 
-                RenderText(0.2f, config.TextY, $"Model: {model}\nPlate: {plate}");
+
+                RenderText(0.2f, config.TextY, $"Model: {model}\nPlate: {plate}\nSpeed: {mphspeed} MPH");
 
                 string heading = veh.Heading < 45 ? "NB" : veh.Heading < 135 ? "WB" : veh.Heading < 225 ? "SB" : veh.Heading < 315 ? "EB" : "NB";
                 RenderText(0.61f, config.TextY, heading);
@@ -1044,8 +1093,14 @@ namespace HeliCam
         private bool IsPlayerInHeli()
         {
             Vehicle heli = Game.PlayerPed.CurrentVehicle;
+            bool IsValidHeli = false;
 
-            return Entity.Exists(heli) && (Game.PlayerPed.IsInHeli || config.AircraftHashes.Contains(heli.DisplayName.ToLower()) || config.HelicopterHashes.Contains(heli.DisplayName.ToLower()));
+            if ((heli.Model == config.sdpdhelihash1) || (heli.Model == config.sdpdhelihash2) || (heli.Model == config.nhsphelihash1) || (heli.Model == config.nhsphelihash2) || (heli.Model == config.hcsohelihash1) || (heli.Model == config.hcsohelihash2) || (heli.Model == config.srthelihash1) || (heli.Model == config.srthelihash2) || (heli.Model == config.emshelihash1))
+            {
+                IsValidHeli = true;
+            }
+
+            return Entity.Exists(heli) && IsValidHeli;
         }
 
         private void DrawThermal(float x1, float y1, float z1, float x2, float y2, float z2) => DrawBox(x1, y1, z1, x2, y2, z2, 255, 255, 255, 90);
