@@ -12,7 +12,7 @@
   "AllowRappel": true,
   "AllowSpeedCalculations": true,
   "AllowSpotlights": true,
-  "UseRealisticFLIR": true,
+  "UseRealisticFLIR": false,
   "SDPDHeli1": "polmav",
   "SDPDHeli2": "n/a",
   "NHSPHeli1": "as332",

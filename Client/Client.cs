@@ -36,16 +36,6 @@ namespace HeliCam
         public string SRTHeli2 { get; set; }
         public string EMSHeli1 { get; set; }
 
-        public int sdpdhelihash1;
-        public int sdpdhelihash2;
-        public int nhsphelihash1;
-        public int nhsphelihash2;
-        public int hcsohelihash1;
-        public int hcsohelihash2;
-        public int srthelihash1;
-        public int srthelihash2;
-        public int emshelihash1;
-
         internal void LoadBackupConfig()
         {
             FovMax = 80.0f;
@@ -63,11 +53,11 @@ namespace HeliCam
             AllowSpotlights = true;
             UseRealisticFLIR = false;
             SDPDHeli1 = "polmav";
-            SDPDHeli2 = "n/a";
+            SDPDHeli2 = "na";
             NHSPHeli1 = "as332";
             NHSPHeli2 = "pantera";
-            HCSOHeli1 = "n/a1";
-            HCSOHeli2 = "n/a2";
+            HCSOHeli1 = "na1";
+            HCSOHeli2 = "na2";
             SRTHeli1 = "c3swathawk";
             SRTHeli2 = "buzzard2";
             EMSHeli1 = "aw139";
@@ -111,6 +101,16 @@ namespace HeliCam
         private readonly Dictionary<int, Spotlight> _drawnSpotlights = new Dictionary<int, Spotlight>();
         private double _lastCamHeading, _lastCamTilt;
         private Tuple<int, Vector3> _speedMarker;
+
+        public int sdpdhelihash1;
+        public int sdpdhelihash2;
+        public int nhsphelihash1;
+        public int nhsphelihash2;
+        public int hcsohelihash1;
+        public int hcsohelihash2;
+        public int srthelihash1;
+        public int srthelihash2;
+        public int emshelihash1;
 
         private readonly List<ThermalBone> _thermalBones = new List<ThermalBone>
         {
@@ -160,15 +160,16 @@ namespace HeliCam
                 config = new Config();
                 config.LoadBackupConfig();
             }
-            config.sdpdhelihash1 = GetHashKey(config.SDPDHeli1);
-            config.sdpdhelihash2 = GetHashKey(config.SDPDHeli2);
-            config.nhsphelihash1 = GetHashKey(config.NHSPHeli1);
-            config.nhsphelihash2 = GetHashKey(config.NHSPHeli2);
-            config.hcsohelihash1 = GetHashKey(config.HCSOHeli1);
-            config.hcsohelihash2 = GetHashKey(config.HCSOHeli2);
-            config.srthelihash1 = GetHashKey(config.SRTHeli1);
-            config.srthelihash2 = GetHashKey(config.SRTHeli2);
-            config.emshelihash1 = GetHashKey(config.EMSHeli1);
+
+            sdpdhelihash1 = GetHashKey(config.SDPDHeli1);
+            sdpdhelihash2 = GetHashKey(config.SDPDHeli2);
+            nhsphelihash1 = GetHashKey(config.NHSPHeli1);
+            nhsphelihash2 = GetHashKey(config.NHSPHeli2);
+            hcsohelihash1 = GetHashKey(config.HCSOHeli1);
+            hcsohelihash2 = GetHashKey(config.HCSOHeli2);
+            srthelihash1 = GetHashKey(config.SRTHeli1);
+            srthelihash2 = GetHashKey(config.SRTHeli2);
+            emshelihash1 = GetHashKey(config.EMSHeli1);
         }
 
 
@@ -297,7 +298,7 @@ namespace HeliCam
         {
             Ped player = Game.PlayerPed;
 
-            if (IsPlayerInHeli() && player.CurrentVehicle.HeightAboveGround > 2.5f)
+            if (IsPlayerInHeli(player) && player.CurrentVehicle.HeightAboveGround > 2.5f)
             {
                 Vehicle heli = player.CurrentVehicle;
 
@@ -1088,17 +1089,22 @@ namespace HeliCam
         }
 
 
-        private bool IsPlayerInHeli()
+        public bool IsPlayerInHeli(Ped player)
         {
-            Vehicle heli = Game.PlayerPed.CurrentVehicle;
-            bool IsValidHeli = false;
-
-            if ((heli.Model == config.sdpdhelihash1) || (heli.Model == config.sdpdhelihash2) || (heli.Model == config.nhsphelihash1) || (heli.Model == config.nhsphelihash2) || (heli.Model == config.hcsohelihash1) || (heli.Model == config.hcsohelihash2) || (heli.Model == config.srthelihash1) || (heli.Model == config.srthelihash2) || (heli.Model == config.emshelihash1))
+            if (player.IsInVehicle())
             {
-                IsValidHeli = true;
-            }
+                Vehicle heli = Game.PlayerPed.CurrentVehicle;
+                bool IsValidHeli = false;
 
-            return Entity.Exists(heli) && IsValidHeli;
+                if ((heli.Model == sdpdhelihash1) || (heli.Model == sdpdhelihash2) || (heli.Model == nhsphelihash1) || (heli.Model == nhsphelihash2) || (heli.Model == hcsohelihash1) || (heli.Model == hcsohelihash2) || (heli.Model == srthelihash1) || (heli.Model == srthelihash2) || (heli.Model == emshelihash1))
+                {
+                    IsValidHeli = true;
+                }
+
+                return Entity.Exists(heli) && IsValidHeli;
+            }
+            else
+                return false;
         }
 
         private void DrawThermal(float x1, float y1, float z1, float x2, float y2, float z2) => DrawBox(x1, y1, z1, x2, y2, z2, 255, 255, 255, 90);
