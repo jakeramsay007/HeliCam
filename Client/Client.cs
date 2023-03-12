@@ -30,6 +30,7 @@ namespace HeliCam
         public string SDPDHeli2 { get; set; }
         public string NHSPHeli1 { get; set; }
         public string NHSPHeli2 { get; set; }
+        public string NHSPHeli3 { get; set; }
         public string HCSOHeli1 { get; set; }
         public string HCSOHeli2 { get; set; }
         public string SRTHeli1 { get; set; }
@@ -60,6 +61,7 @@ namespace HeliCam
             SDPDHeli2 = "na";
             NHSPHeli1 = "as332";
             NHSPHeli2 = "pantera";
+            NHSPHeli3 = "swat145c";
             HCSOHeli1 = "na1";
             HCSOHeli2 = "na2";
             SRTHeli1 = "c3swathawk";
@@ -114,6 +116,7 @@ namespace HeliCam
         public int sdpdhelihash2;
         public int nhsphelihash1;
         public int nhsphelihash2;
+        public int nhsphelihash3;
         public int hcsohelihash1;
         public int hcsohelihash2;
         public int srthelihash1;
@@ -177,6 +180,7 @@ namespace HeliCam
             sdpdhelihash2 = GetHashKey(config.SDPDHeli2);
             nhsphelihash1 = GetHashKey(config.NHSPHeli1);
             nhsphelihash2 = GetHashKey(config.NHSPHeli2);
+            nhsphelihash3 = GetHashKey(config.NHSPHeli3);
             hcsohelihash1 = GetHashKey(config.HCSOHeli1);
             hcsohelihash2 = GetHashKey(config.HCSOHeli2);
             srthelihash1 = GetHashKey(config.SRTHeli1);
@@ -1113,7 +1117,7 @@ namespace HeliCam
                 Vehicle heli = Game.PlayerPed.CurrentVehicle;
                 bool IsValidHeli = false;
 
-                if ((heli.Model == sdpdhelihash1) || (heli.Model == sdpdhelihash2) || (heli.Model == nhsphelihash1) || (heli.Model == nhsphelihash2) || (heli.Model == hcsohelihash1) || (heli.Model == hcsohelihash2) || (heli.Model == srthelihash1) || (heli.Model == srthelihash2) || (heli.Model == srthelihash3) || (heli.Model == emshelihash1) || (heli.Model ==blmhelihash1) || (heli.Model == newshelihash1) || (heli.Model == newshelihash2))
+                if ((heli.Model == sdpdhelihash1) || (heli.Model == sdpdhelihash2) || (heli.Model == nhsphelihash1) || (heli.Model == nhsphelihash2) || (heli.Model == nhsphelihash3) || (heli.Model == hcsohelihash1) || (heli.Model == hcsohelihash2) || (heli.Model == srthelihash1) || (heli.Model == srthelihash2) || (heli.Model == srthelihash3) || (heli.Model == emshelihash1) || (heli.Model ==blmhelihash1) || (heli.Model == newshelihash1) || (heli.Model == newshelihash2))
                 {
                     IsValidHeli = true;
                 }
