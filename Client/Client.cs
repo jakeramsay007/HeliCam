@@ -326,29 +326,26 @@ namespace HeliCam
                 {
                     PlayManagedSoundFrontend("SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET");
                     _helicam = true;
-                }
-                if (Game.IsControlJustPressed(0, REPEL) && config.AllowRappel)
-                {
-                    if (heli.GetPedOnSeat(VehicleSeat.LeftRear) == player || heli.GetPedOnSeat(VehicleSeat.RightRear) == player)
-                        {
-                        if (_shouldRappel)
+
+                    if (Game.IsControlJustPressed(0, REPEL) && config.AllowRappel)
+                    {
+                        if (heli.GetPedOnSeat(VehicleSeat.Driver) == player || heli.GetPedOnSeat(VehicleSeat.RightRear) == player)
                             {
-                                PlayManagedSoundFrontend("SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET");
-                                TaskRappelFromHeli(player.Handle, 1);
+                                Screen.ShowNotification("~r~Can't rappel from this seat!", true);
+                                PlayManagedSoundFrontend("5_Second_Timer", "DLC_HEISTS_GENERAL_FRONTEND_SOUNDS");
                             }
-                            else
-                            {
-                                Screen.ShowNotification("Press again to rappel from helicopter.");
-                                _shouldRappel = true;
+                            if (_shouldRappel)
+                                {
+                                    PlayManagedSoundFrontend("SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+                                    TaskRappelFromHeli(player.Handle, 1);
+                                }
+                                else
+                                {
+                                    Screen.ShowNotification("Press again to rappel from helicopter.");
+                                    _shouldRappel = true;
+                                }
                             }
-                        }
-                        else
-                        {
-                            Screen.ShowNotification("~r~Can't rappel from this seat!", true);
-                            PlayManagedSoundFrontend("5_Second_Timer", "DLC_HEISTS_GENERAL_FRONTEND_SOUNDS");
-                        }
-                    
-                }
+                    }
             }
             else
             {
